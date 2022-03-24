@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+import "hardhat/console.sol";
+
 contract Marketplace is ReentrancyGuard {
     // State Variables
     address payable public immutable feeAccount;
@@ -19,6 +21,8 @@ contract Marketplace is ReentrancyGuard {
         address payable seller;
         bool sold;
     }
+    // itemId -> Item
+    mapping(uint256 => Item) public items;
 
     event Offered(
         uint256 itemId,
@@ -28,20 +32,19 @@ contract Marketplace is ReentrancyGuard {
         address indexed seller
     );
 
-    // itemId -> Item
-    mapping(uint256 => Item) public items;
-
     constructor(uint256 _feePercent) {
         feeAccount = payable(msg.sender);
         feePercent = _feePercent;
     }
 
+    // Make item to offer on the marketplace
     function makeItem(
         IERC721 _nft,
         uint256 _tokenId,
         uint256 _price
     ) external nonReentrant {
         require(_price > 0, "Price must be greater than zero");
+        // increment itemCount
         itemCount++;
         // transfer nft
         _nft.transferFrom(msg.sender, address(this), _tokenId);
