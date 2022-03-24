@@ -11,6 +11,15 @@ contract Marketplace is ReentrancyGuard {
     uint256 public immutable feePercent;
     uint256 public itemCount;
 
+    struct Item {
+        uint256 itemId;
+        IERC721 nft;
+        uint256 tokenId;
+        uint256 price;
+        address payable seller;
+        bool sold;
+    }
+
     constructor(uint256 _feePercent) {
         feeAccount = payable(msg.sender);
         feePercent = _feePercent;
